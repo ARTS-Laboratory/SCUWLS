@@ -2,7 +2,7 @@
 #include <Wire.h>                       // for I2C
 #include <HCSR04.h>                     // for the USS
 #include <DS3232RTC.h>                  // for the RTC https://github.com/JChristensen/DS3232RTC
-DS3232RTC RTC;
+DS3232RTC myRTC;
 #include <Adafruit_Sensor.h>            // for BME 
 #include <Adafruit_BME280.h>            // for BME
 
@@ -64,24 +64,24 @@ void setup() {
 
   // RTC initializaiton ------------------------------------------------------------------------------------------------------------------------------
   // initialize the alarms to known values, clear the alarm flags, clear the alarm interrupt flags
-  RTC.begin();
-  RTC.setAlarm(DS3232RTC::ALM1_MATCH_DATE, 0, 0, 0, 1);
-  RTC.setAlarm(DS3232RTC::ALM2_MATCH_DATE, 0, 0, 0, 1);
-  RTC.alarm(DS3232RTC::ALARM_1);
-  RTC.alarm(DS3232RTC::ALARM_2);
-  RTC.alarmInterrupt(DS3232RTC::ALARM_1, false);
-  RTC.alarmInterrupt(DS3232RTC::ALARM_2, false);
-  RTC.squareWave(DS3232RTC::SQWAVE_NONE);
+  myRTC.begin();
+  myRTC.setAlarm(DS3232RTC::ALM1_MATCH_DATE, 0, 0, 0, 1);
+  myRTC.setAlarm(DS3232RTC::ALM2_MATCH_DATE, 0, 0, 0, 1);
+  myRTC.alarm(DS3232RTC::ALARM_1);
+  myRTC.alarm(DS3232RTC::ALARM_2);
+  myRTC.alarmInterrupt(DS3232RTC::ALARM_1, false);
+  myRTC.alarmInterrupt(DS3232RTC::ALARM_2, false);
+  myRTC.squareWave(DS3232RTC::SQWAVE_NONE);
   
   // get the current time from the RTC and set an alarm according to the time interval
                             
-  time_t t = RTC.get();                            
+  time_t t = myRTC.get();                            
   time_t a = t + alarmInterval - t % alarmInterval;
   if (a <= t) a += alarmInterval;
   // set the alarm
-  RTC.setAlarm(DS3232RTC::ALM1_MATCH_HOURS, second(a), minute(a), hour(a), 0);
-  RTC.alarm(DS3232RTC::ALARM_1);    // clear the alarm flag
-  RTC.alarmInterrupt(DS3232RTC::ALARM_1, true);
+  myRTC.setAlarm(DS3232RTC::ALM1_MATCH_HOURS, second(a), minute(a), hour(a), 0);
+  myRTC.alarm(DS3232RTC::ALARM_1);    // clear the alarm flag
+  myRTC.alarmInterrupt(DS3232RTC::ALARM_1, true);
 
   // BME initialization ------------------------------------------------------------------------------------------------------------------------------
   bme.begin(0x76);
@@ -104,11 +104,11 @@ void power_off() {
   delay(100);                               
                           
   // Set next alarm
-  time_t a = RTC.get() + alarmInterval;
-  RTC.setAlarm(DS3232RTC::ALM1_MATCH_HOURS, second(a), minute(a), hour(a), 0);
-  RTC.alarm(DS3232RTC::ALARM_1);               // Clear current alarm flag
-  RTC.alarmInterrupt(DS3232RTC::ALARM_1, true); // Re-enable interrupt pin
-  RTC.writeRTC(0x0E, 0x45);                     // Set BBSQW = 1 so alarm works on coincell battery
+  time_t a = myRTC.get() + alarmInterval;
+  myRTC.setAlarm(DS3232RTC::ALM1_MATCH_HOURS, second(a), minute(a), hour(a), 0);
+  myRTC.alarm(DS3232RTC::ALARM_1);               // Clear current alarm flag
+  myRTC.alarmInterrupt(DS3232RTC::ALARM_1, true); // Re-enable interrupt pin
+  myRTC.writeRTC(0x0E, 0x45);                     // Set BBSQW = 1 so alarm works on coincell battery
 
   delay(50);      // Give hardware a moment to stabilize
 
@@ -151,7 +151,7 @@ void logData() {
   if (myFile)                             // tests if the file has opened
   {
     // write the RTC data
-    time_t t = RTC.get();
+    time_t t = myRTC.get();
     myFile.print(String(month(t)));
     myFile.print("/");
     myFile.print(String(day(t)));
