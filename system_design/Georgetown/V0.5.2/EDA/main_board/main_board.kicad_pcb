@@ -10822,7 +10822,7 @@
 			)
 		)
 	)
-	(gr_text "Arduino Nano"
+	(gr_text "Nano Every"
 		(at 153.95 127.82 90)
 		(layer "F.SilkS")
 		(uuid "c5c868fc-0a40-4a03-8807-905589e02d72")
