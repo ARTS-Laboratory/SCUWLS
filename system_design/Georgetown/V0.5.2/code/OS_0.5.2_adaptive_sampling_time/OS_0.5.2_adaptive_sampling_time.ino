@@ -151,7 +151,7 @@ void logData() {
   if (myFile)                             // tests if the file has opened
   {
     // write the RTC data
-    time_t t = myRTC.get();
+    time_t t = myRTC.get();   //transmit
     myFile.print(String(month(t)));
     myFile.print("/");
     myFile.print(String(day(t)));
@@ -169,7 +169,7 @@ void logData() {
     for (int i = 0; i < 5; i++) {
       myFile.print(dist[i]); myFile.print(",");
     }
-    myFile.print(avgDist); myFile.print(",");
+    myFile.print(avgDist); myFile.print(","); //transmit
 
     // write the BME data
     myFile.print(temp); myFile.print(",");
@@ -177,7 +177,7 @@ void logData() {
     myFile.print(pressure); myFile.print(",");
 
     // write the power data
-    myFile.print(busvoltage); myFile.print(",");
+    myFile.print(busvoltage); myFile.print(",");  //transmit
 
     myFile.println("");
     myFile.close();           // closes and saves the file to the SD card
