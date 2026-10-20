@@ -37,6 +37,7 @@ const int LED = A3;
 unsigned long prevTimeElapsed = 0;
 
 void setup() {
+
   Serial.begin(9600);
   pinMode(pinCS, OUTPUT);
   pinMode(powerLatchPin, OUTPUT);
