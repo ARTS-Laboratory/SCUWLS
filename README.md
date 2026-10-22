@@ -60,7 +60,6 @@ Cite as:
 
 @Misc{ARTSLabSwapConstrainedUav,     
   author = {{ARTS-L}ab},  
-  howpublished = {GitHub},   
   howpublished = {GitHub},  
   title  = {{SWaP-Constrained UAV-deployable Water-Level Sensor (SCUWLS)}},    
   groups = {{ARTS-L}ab},    
