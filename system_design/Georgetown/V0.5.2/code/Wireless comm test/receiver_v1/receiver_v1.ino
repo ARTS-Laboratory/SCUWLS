@@ -3,27 +3,20 @@
 #include <TimeLib.h>
 
 // HW-237 / nRF24L01 connections
-const byte rfCE = 6;
-const byte rfCSN = 7;
-RF24 radio(rfCE, rfCSN);
+RF24 radio(6, 7);
 const byte radioAddress[6] = "00001";
-
 const uint16_t INVALID_VALUE = 65535;
-
-// This must be identical to the transmitter's structure.
-// Packet size: 10 bytes.
 struct __attribute__((packed)) TelemetryPacket {
   uint16_t sampleNumber;
   uint32_t unixTime;
-  uint16_t avgDist_mm;
-  uint16_t busVoltage_mV;
+  uint16_t avgDist;
+  uint16_t busVoltage;
 };
 
 bool setupRadio() {
   if (!radio.begin()) {
     return false;
   }
-
   radio.openReadingPipe(1, radioAddress);
   radio.setPALevel(RF24_PA_LOW);
   radio.setDataRate(RF24_250KBPS);
@@ -52,24 +45,22 @@ void displayReceivedPacket(const TelemetryPacket &packet) {
   Serial.println("----------------------");
   Serial.print("Packet received. Sample: ");
   Serial.println(packet.sampleNumber);
-
   Serial.print("Transmitted time: ");
   printTime((time_t)packet.unixTime);
-
   Serial.print("Average distance: ");
-  if (packet.avgDist_mm == INVALID_VALUE) {
+  if (packet.avgDist == INVALID_VALUE) {
     Serial.println("invalid");
   } else {
-    Serial.print(packet.avgDist_mm / 10.0, 1);
-    Serial.println(" cm");
+    Serial.print(packet.avgDist / 10.0, 1);
+    Serial.println("cm");
   }
 
   Serial.print("Bus voltage: ");
-  if (packet.busVoltage_mV == INVALID_VALUE) {
+  if (packet.busVoltage == INVALID_VALUE) {
     Serial.println("invalid");
   } else {
-    Serial.print(packet.busVoltage_mV);
-    Serial.println(" mV");
+    Serial.print(packet.busVoltage);
+    Serial.println("V");
   }
 }
 
@@ -79,18 +70,13 @@ void setup() {
 
   if (!setupRadio()) {
     Serial.println("NRF24 not found!");
-    while (true) {
-    }
   }
-
   Serial.println("Receiver ready and listening.");
 }
 
 void loop() {
   if (radio.available()) {
     TelemetryPacket receivedPacket;
-
-    // If several packets arrived, keep the newest one.
     while (radio.available()) {
       radio.read(&receivedPacket, sizeof(receivedPacket));
     }
